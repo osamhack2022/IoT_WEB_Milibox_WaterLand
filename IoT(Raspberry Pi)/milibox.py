@@ -14,6 +14,7 @@ with picamera.PiCamera() as camera:
         camera.annotate_text = f"{MILITARY_MODE if is_military_mode else NORMAL_MODE}\n {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
         # Todo: 통신해서 주변에 장비(위병소)가 있는지 확인
         # if 통신
+        #     camera.stop_recording()
         #     start_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         #     is_military_mode = False if is_military_mode else True
         #     camera.start_recording(start_time)
