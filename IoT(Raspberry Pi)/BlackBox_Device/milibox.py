@@ -1,5 +1,6 @@
 import picamera
 import datetime
+from security import encrypt_file
 
 
 NORMAL_MODE = '일반모드'
