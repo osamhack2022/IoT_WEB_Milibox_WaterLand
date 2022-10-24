@@ -9,6 +9,10 @@ class RecordSerializer(serializers.ModelSerializer):
         # fields = ('id', 'created_at', 'title', 'category', 'star_rating',)  # req, res 시 사용되길 원하는 필드(컬럼)만 적어줘도 됨.
 
 
+    def create(self, validated_data):
+        records = self.context['records']
+        for record in records:
+            Record.objects.create(file=record)
 
 class MOUSSerializer(serializers.ModelSerializer):
     class Meta:
