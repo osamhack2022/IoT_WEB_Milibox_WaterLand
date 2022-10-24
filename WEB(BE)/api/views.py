@@ -9,6 +9,26 @@ from .models import *
 from .serializers import *
 
 
+class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 암호화 녹화 영상 제출 및 복호화된 녹화영상 조회 API
+    """
+
+    serializer_class = RecordSerializer
+
+    queryset = Record.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        user_sn = self.request.session['sn']
+
+        records = Record.objects.filter(owner=user_sn)
+        if not records.exists():
+            raise Http404()
+
+        return Response(RecordSerializer(records, many=True).data)
+
+
+
 class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
     # SSO를 통한 사용자체계상 이용자 정보 호출
@@ -29,4 +49,5 @@ class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         if not mous.exists():
             raise Http404()
 
+        self.request.session['sn'] = self.request.GET.get('sn', None)
         return mous
