@@ -68,6 +68,7 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Record.objects.all()
 
+    @swagger_auto_schema(query_serializer=RecordQuerySerializer)
     @action(methods=['get'], detail=True, renderer_classes=(PassthroughRenderer,))
     def download(self, *args, **kwargs):
         record_id = self.request.GET.get('id', None)
