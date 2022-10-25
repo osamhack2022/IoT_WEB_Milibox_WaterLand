@@ -49,4 +49,4 @@ class MiliboxDecrypter:
         military_unit_code = f.decrypt(encrypted_military_unit_code)
         content = f.decrypt(encrypted_content)
 
-        return True, military_unit_code, content
+        return True, military_unit_code.decode('utf-8'), content
