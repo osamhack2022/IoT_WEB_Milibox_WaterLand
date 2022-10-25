@@ -13,9 +13,9 @@ class MiliboxDecrypter:
     MILITARY_UNIT_CODE_END = b'\n-----END ENCRYPTED MILITARY UNIT CODE BEGIN-----\n'
     RECORD_BEGIN = b'\n-----BEGIN ENCRYPTED RECORDED VIDEO-----\n'
 
-    def __init__(self) -> None:
+    def __init__(self, private_key_path="private_key.pem") -> None:
         # 서버 비밀키 열기
-        with open("private_key.pem", "rb") as key_file:
+        with open(private_key_path, "rb") as key_file:
             self.private_key = serialization.load_pem_private_key(
                 key_file.read(),
                 password=None,
