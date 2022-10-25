@@ -59,10 +59,14 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     """
     # 복호화된 녹화영상 조회 API
     영상조회시 조회기록(로그) 생성 및 접근 권한에 따른 파일 제한 조치
+    ## 조회권한
+    - 본인이 업로드한 영상
+    - 조회 권한을 부여받은 영상
+    - 관리자의 경우 본인의 관리부대에 해당하는 영상
+    - 최고관리자의 경우 모든 영상
     """
 
     queryset = Record.objects.all()
-
 
     @action(methods=['get'], detail=True, renderer_classes=(PassthroughRenderer,))
     def download(self, *args, **kwargs):
@@ -71,7 +75,9 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
         viewer_sn = self.request.session['sn']
         
         permission = Permission.objects.filter(record_id=record, allowed_user=viewer_sn)
-        if record.owner != viewer_sn and not permission.exists():
+        master = Admin.objects.filter(type='MASTER', sn=viewer_sn)
+        admin = Admin.objects.filter(type='ADMIN', sn=viewer_sn, unit=record.unit)
+        if record.owner != viewer_sn and not permission.exists() and not master.exists() and not admin.exists():
             raise Http404()
 
         ViewHistory.objects.create(viewer=viewer_sn, ip_address=get_client_ip(self.request), record_id=record)

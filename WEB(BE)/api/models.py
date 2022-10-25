@@ -43,3 +43,17 @@ class MOUS(models.Model):
 
     def __str__(self):
         return f"{self.sn} {self.rk} {self.nm}"
+
+
+class Admin(models.Model):
+    TYPE = (
+        ('MASTER', '최고관리자'),
+        ('ADMIN', '관리자'),
+    )
+    id = models.BigAutoField(primary_key=True, verbose_name='관리자 ID값')
+    sn = models.CharField(null=False, max_length=20, verbose_name='군번')
+    unit = models.CharField(null=True, max_length=20, verbose_name='관리부대 코드')
+    type = models.CharField(null=False, max_length=10, choices=TYPE, verbose_name='괸리자유형')
+
+    def __str__(self):
+        return f"{self.sn} {self.type} {self.unit}"
