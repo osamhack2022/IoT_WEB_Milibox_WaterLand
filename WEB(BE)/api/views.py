@@ -1,6 +1,6 @@
 from rest_framework import status, viewsets, mixins 
 from rest_framework.response import Response
-from rest_framework.parsers import FileUploadParser, MultiPartParser
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework import parsers, renderers, serializers, status
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
@@ -32,57 +32,19 @@ class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
         return Response(RecordSerializer(records, many=True).data)
 
-
-
 class RecordUploadView(views.APIView):
-    serializer_class = RecordSerializer
-    http_method_names = ['post', ]
+    parser_classes = (FormParser, MultiPartParser)
 
-    def create(self, request, *args, **kwargs):
-        documents = request.FILES.getlist('document', None)
-        data = {
-            "title": request.POST.get('title', None),
-            }
-        _serializer = self.serializer_class(data=data, context={'documents': documents})
-        if _serializer.is_valid():
-            _serializer.save()
-            return Response(data=_serializer.data, status=status.HTTP_201_CREATED)  # NOQA
-        else:
-            return Response(data=_serializer.errors, status=status.HTTP_400_BAD_REQUEST)  # NOQA
-# class RecordUploadView(views.APIView):
-#     parser_classes = [MultiPartParser]
-
-#     @swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
-#     def post(self, request, format=None):
-#         file_obj = request.data['file']
-#         # ...
-#         # do some stuff with uploaded file
-#         # ...
-#         return Response(status=204)
-
-# class RecordUploadView(CreateAPIView):
-#     parser_classes = (MultiPartParser,)
-
-#     @swagger_auto_schema(operation_description='Upload file...',)
-#     @action(detail=False, methods=['post'])
-#     def upload(self, request):
-#         # serializer = self.serializer_class(data=request.data)
-#         # if serializer.is_valid(raise_exception=True):
-#         #     data = serializer.validated_data
-#         # resume = data["resume"]
-#         #     # resume.name - file name
-#         #     # resume.read() - file contens
-#         #     return Response({"success": "True"})
-        
-#         record_set = self.context['request'].FILES
-#         for record_data in record_set.getlist('record'):
-#             Record.objects.create(file_name=record_data.name, file=record_data)
-#         return Response({'success': "False"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-#         record_set = self.context['request'].FILES
-#         for record_data in record_set.getlist('record'):
-#             Record.objects.create(file=record_data)
+    @swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
+    def post(self, request, format=None):
+        user_sn = self.request.session['sn']
+        print(user_sn, request.FILES)
+        for encrypted_file in request.FILES.getlist('record'):
+            Record.objects.create(file_name=encrypted_file.name, file=encrypted_file, owner=user_sn)
+            # print(encrypted_file)
+            print(encrypted_file.name)
+            # encrypted_file.read()
+        return Response(status=204)
         
 
 
