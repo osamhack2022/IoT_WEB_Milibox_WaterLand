@@ -21,6 +21,11 @@ class MOUSSerializer(serializers.ModelSerializer):
         model = MOUS
         fields = ('sn', 'rk', 'nm')
 
+class AdminSerializer(serializers.ModelSerializer):
+    class Meta:
+        record = Admin.objects.all()
+        model = Admin
+        fields = '__all__'
 
 class MOUSQuerySerializer(serializers.Serializer):
     sn = serializers.CharField(help_text="군번", required=True)

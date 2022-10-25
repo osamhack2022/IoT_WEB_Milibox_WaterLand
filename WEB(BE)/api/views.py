@@ -135,3 +135,27 @@ class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
         self.request.session['sn'] = self.request.GET.get('sn', None)
         return mous
+
+
+class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 관리자 정보 호출
+    """
+
+    serializer_class = AdminSerializer
+
+    @swagger_auto_schema(query_serializer=MOUSQuerySerializer)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        conditions = {
+            'sn': self.request.GET.get('sn', None)
+        }
+
+        admin = Admin.objects.filter(**conditions)
+        if not admin.exists():
+            raise Http404()
+
+        self.request.session['sn'] = self.request.GET.get('sn', None)
+        return admin
