@@ -12,6 +12,7 @@ from django.http import Http404
 from .models import * 
 from .serializers import *
 from rest_framework import views
+from milibox_decrypter import MiliboxDecrypter
 
 
 class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
@@ -38,16 +39,14 @@ class RecordUploadView(views.APIView):
     @swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
     def post(self, request, format=None):
         user_sn = self.request.session['sn']
-        print(user_sn, request.FILES)
+        decrypter = MiliboxDecrypter()
         for encrypted_file in request.FILES.getlist('record'):
-            Record.objects.create(file_name=encrypted_file.name, file=encrypted_file, owner=user_sn)
-            # print(encrypted_file)
-            print(encrypted_file.name)
-            # encrypted_file.read()
+            result, military_unit_code, content = decrypter.decrypt_file(encrypted_file)
+            if result == True:
+                filename = encrypted_file.name.split('.milibox')[0]
+                Record.objects.create(file_name=filename, file=content, owner=user_sn, unit=military_unit_code)
+            print(f"파일업로드: {encrypted_file.name} {result} 부대: {military_unit_code}")
         return Response(status=204)
-        
-
-
 
 
 class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
