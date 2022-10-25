@@ -9,6 +9,7 @@ from drf_yasg import openapi
 
 from django.views import View 
 from django.http import Http404
+from django.core.files.base import ContentFile
 from .models import * 
 from .serializers import *
 from rest_framework import views
@@ -44,7 +45,8 @@ class RecordUploadView(views.APIView):
             result, military_unit_code, content = decrypter.decrypt_file(encrypted_file)
             if result == True:
                 filename = encrypted_file.name.split('.milibox')[0]
-                Record.objects.create(file_name=filename, file=content, owner=user_sn, unit=military_unit_code)
+                file = ContentFile(content, name=f"{filename}.h264")
+                Record.objects.create(file_name=filename, file=file, owner=user_sn, unit=military_unit_code)
             print(f"파일업로드: {encrypted_file.name} {result} 부대: {military_unit_code}")
         return Response(status=204)
 
