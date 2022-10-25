@@ -6,19 +6,29 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from django.http import FileResponse
+from rest_framework import viewsets, renderers
+from rest_framework.decorators import action
 from django.views import View 
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.core.files.base import ContentFile
 from .models import * 
 from .serializers import *
 from rest_framework import views
 from milibox_decrypter import MiliboxDecrypter
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
-class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
-    # 암호화 녹화 영상 제출 및 복호화된 녹화영상 조회 API
+    # 복호화된 녹화영상 목록 조회 API
     """
 
     serializer_class = RecordSerializer
@@ -34,10 +44,50 @@ class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
         return Response(RecordSerializer(records, many=True).data)
 
+
+class PassthroughRenderer(renderers.BaseRenderer):
+    """
+        Return data as-is. View should supply a Response.
+    """
+    media_type = ''
+    format = ''
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        return data
+
+
+class RecordViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    # 복호화된 녹화영상 조회 API
+    영상조회시 조회기록(로그) 생성 및 접근 권한에 따른 파일 제한 조치
+    """
+
+    queryset = Record.objects.all()
+
+
+    @action(methods=['get'], detail=True, renderer_classes=(PassthroughRenderer,))
+    def download(self, *args, **kwargs):
+        record_id = self.request.GET.get('id', None)
+        instance = Record.objects.get(id=record_id)
+        viewer_sn = self.request.session['sn']
+        ViewHistory.objects.create(viewer=viewer_sn, ip_address=get_client_ip(self.request), record_id=instance)
+
+        file_handle = instance.file.open()
+
+        response = FileResponse(file_handle, content_type='whatever')
+        response['Content-Length'] = instance.file.size
+        response['Content-Disposition'] = 'attachment; filename="%s"' % instance.file.name
+
+        return response
+
+
 class RecordUploadView(views.APIView):
+    """
+    # 암호화된 영상을 업로드하는 API
+    """
+
     parser_classes = (FormParser, MultiPartParser)
 
-    @swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
+    #@swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
     def post(self, request, format=None):
         user_sn = self.request.session['sn']
         decrypter = MiliboxDecrypter()
