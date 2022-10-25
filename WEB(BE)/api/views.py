@@ -67,15 +67,20 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     @action(methods=['get'], detail=True, renderer_classes=(PassthroughRenderer,))
     def download(self, *args, **kwargs):
         record_id = self.request.GET.get('id', None)
-        instance = Record.objects.get(id=record_id)
+        record = Record.objects.get(id=record_id)
         viewer_sn = self.request.session['sn']
-        ViewHistory.objects.create(viewer=viewer_sn, ip_address=get_client_ip(self.request), record_id=instance)
+        
+        permission = Permission.objects.filter(record_id=record, allowed_user=viewer_sn)
+        if record.owner != viewer_sn and not permission.exists():
+            raise Http404()
 
-        file_handle = instance.file.open()
+        ViewHistory.objects.create(viewer=viewer_sn, ip_address=get_client_ip(self.request), record_id=record)
+
+        file_handle = record.file.open()
 
         response = FileResponse(file_handle, content_type='whatever')
-        response['Content-Length'] = instance.file.size
-        response['Content-Disposition'] = 'attachment; filename="%s"' % instance.file.name
+        response['Content-Length'] = record.file.size
+        response['Content-Disposition'] = 'attachment; filename="%s"' % record.file.name
 
         return response
 
