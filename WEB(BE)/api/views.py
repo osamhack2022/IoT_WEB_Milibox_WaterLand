@@ -1,5 +1,9 @@
 from rest_framework import status, viewsets, mixins 
-from rest_framework.response import Response 
+from rest_framework.response import Response
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
+from rest_framework import parsers, renderers, serializers, status
+from rest_framework.generics import CreateAPIView
+from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -7,6 +11,7 @@ from django.views import View
 from django.http import Http404
 from .models import * 
 from .serializers import *
+from rest_framework import views
 
 
 class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
@@ -26,6 +31,22 @@ class RecordViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
             raise Http404()
 
         return Response(RecordSerializer(records, many=True).data)
+
+class RecordUploadView(views.APIView):
+    parser_classes = (FormParser, MultiPartParser)
+
+    @swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
+    def post(self, request, format=None):
+        user_sn = self.request.session['sn']
+        print(user_sn, request.FILES)
+        for encrypted_file in request.FILES.getlist('record'):
+            Record.objects.create(file_name=encrypted_file.name, file=encrypted_file, owner=user_sn)
+            # print(encrypted_file)
+            print(encrypted_file.name)
+            # encrypted_file.read()
+        return Response(status=204)
+        
+
 
 
 
