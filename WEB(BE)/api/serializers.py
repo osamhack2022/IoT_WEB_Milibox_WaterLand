@@ -17,8 +17,12 @@ class RecordSerializer(serializers.ModelSerializer):
 
 
 class ViewHistorySerializer(serializers.ModelSerializer):
+    sn = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField()
     rank = serializers.SerializerMethodField()
+
+    def get_sn(self, obj):
+        return obj.viewer.sn
 
     def get_name(self, obj):
         return obj.viewer.nm
@@ -29,7 +33,7 @@ class ViewHistorySerializer(serializers.ModelSerializer):
     class Meta:
         mous = ViewHistory.objects.all()
         model = ViewHistory
-        fields = ('viewer', 'ip_address', 'name', 'rank')
+        fields = ('sn', 'ip_address', 'name', 'rank')
 
 
 class MOUSSerializer(serializers.ModelSerializer):
