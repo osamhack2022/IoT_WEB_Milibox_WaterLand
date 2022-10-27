@@ -55,8 +55,17 @@ class Admin(models.Model):
     )
     id = models.BigAutoField(primary_key=True, verbose_name='관리자 ID값')
     sn = models.CharField(null=False, max_length=20, verbose_name='군번')
-    unit = models.CharField(null=True, max_length=20, verbose_name='관리부대 코드')
+    unit = models.ForeignKey("Org", null=False, on_delete=models.CASCADE, verbose_name='관리부대')
     type = models.CharField(null=False, max_length=10, choices=TYPE, verbose_name='괸리자유형')
 
     def __str__(self):
         return f"{self.sn} {self.type} {self.unit}"
+
+
+class Org(models.Model):
+    id = models.BigAutoField(primary_key=True, verbose_name='부대 ID값')
+    parent = models.ForeignKey("Org", blank=True, on_delete=models.CASCADE, related_name = 'parent_unit', verbose_name='상위부대')
+    name = models.CharField(null=False, max_length=20, verbose_name='부대명')
+
+    def __str__(self):
+        return self.name
