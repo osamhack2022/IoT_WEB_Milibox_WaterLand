@@ -17,9 +17,12 @@ class Record(models.Model):
 # 조회기록
 class ViewHistory(models.Model):
     id = models.BigAutoField(primary_key=True, verbose_name='조회기록 ID값')
-    viewer = models.CharField(null=False, max_length=20, verbose_name='조회자 군번')
+    viewer = models.ForeignKey("MOUS", on_delete=models.CASCADE, verbose_name='조회자')
     ip_address = models.CharField(null=False, max_length=255, verbose_name='조회한 IP주소')
     record_id = models.ForeignKey("Record", on_delete=models.CASCADE, verbose_name='녹화영상 ID값')
+
+    def __str__(self):
+        return f"{self.record_id} {self.viewer} {self.ip_address}"
 
     
 # 특정 파일 조회권한

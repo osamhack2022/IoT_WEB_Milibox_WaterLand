@@ -15,6 +15,23 @@ class RecordSerializer(serializers.ModelSerializer):
         for record in records:
             Record.objects.create(file=record)
 
+
+class ViewHistorySerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    rank = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return obj.viewer.nm
+
+    def get_rank(self, obj):
+        return obj.viewer.rk
+
+    class Meta:
+        mous = ViewHistory.objects.all()
+        model = ViewHistory
+        fields = ('viewer', 'ip_address', 'name', 'rank')
+
+
 class MOUSSerializer(serializers.ModelSerializer):
     class Meta:
         mous = MOUS.objects.all()
@@ -26,6 +43,11 @@ class AdminSerializer(serializers.ModelSerializer):
         record = Admin.objects.all()
         model = Admin
         fields = '__all__'
+
+
+class ViewHistoryQuerySerializer(serializers.Serializer):
+    id = serializers.IntegerField(help_text="녹화영상 식별자(ID)", required=True)
+
 
 class MOUSQuerySerializer(serializers.Serializer):
     sn = serializers.CharField(help_text="군번", required=True)

@@ -38,11 +38,32 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
     def list(self, request, *args, **kwargs):
         user_sn = self.request.session['sn']
 
+        # Todo: 본인영상이외 공유영상, 관리자권한 영상들도 추가 필요
         records = Record.objects.filter(owner=user_sn)
         if not records.exists():
             raise Http404()
 
         return Response(RecordSerializer(records, many=True).data)
+
+
+class RecordHistoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 녹화영상 조회기록 API
+    """
+
+    serializer_class = ViewHistorySerializer
+
+    queryset = ViewHistory.objects.all()
+
+    @swagger_auto_schema(query_serializer=ViewHistoryQuerySerializer)
+    def list(self, request, *args, **kwargs):
+        record_id = self.request.GET.get('id', None)
+
+        record = Record.objects.get(id=record_id)
+
+        historys = ViewHistory.objects.filter(record_id=record)
+
+        return Response(ViewHistorySerializer(historys, many=True).data)
 
 
 class PassthroughRenderer(renderers.BaseRenderer):
@@ -156,7 +177,7 @@ class MOUSSearchViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         }
 
         mous = MOUS.objects.filter(**conditions)
-        
+
         return mous
 
 
