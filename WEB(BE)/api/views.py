@@ -229,6 +229,29 @@ class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         return admin
 
 
+    @swagger_auto_schema(request_body=AdminBodySerializer, operation_description='관리자 등록\nMASTER만 관리자등록가능',) 
+    def add(self, request):
+        try:
+            login_user = self.request.session['sn']
+            admin = Admin.objects.get(user=login_user)
+            if admin.type == "Master":
+                user = MOUS.objects.get(sn=request.data['sn'])
+                unit = Org.objects.get(id=request.data['unit'])
+                type = request.data['type']
+
+                admins = Admin.objects.filter(user=user)
+                if admins.exists():
+                    return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+                
+                admin = Admin.objects.create(user=user, unit=unit, type=type)
+
+                return Response(AdminSerializer(admin).data, status=status.HTTP_201_CREATED)
+            else:
+                raise Http404()
+        except:
+            raise Http404()
+
+
 class AdminListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
     # 관리자 목록 호출

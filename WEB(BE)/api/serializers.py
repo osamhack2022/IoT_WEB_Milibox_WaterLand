@@ -44,10 +44,27 @@ class MOUSSerializer(serializers.ModelSerializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
+    sn = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    rank = serializers.SerializerMethodField()
+    unit_name = serializers.SerializerMethodField()
+
+    def get_sn(self, obj):
+        return obj.user.sn
+
+    def get_name(self, obj):
+        return obj.user.nm
+
+    def get_rank(self, obj):
+        return obj.user.rk
+
+    def get_unit_name(self, obj):
+        return obj.unit.name
+
     class Meta:
         record = Admin.objects.all()
         model = Admin
-        fields = '__all__'
+        fields = ('sn', 'type', 'name', 'rank', 'unit', 'unit_name')
 
 
 class OrgSerializer(serializers.ModelSerializer):
@@ -75,3 +92,9 @@ class RecordQuerySerializer(serializers.Serializer):
 
 class OrgQuerySerializer(serializers.Serializer):
     parent = serializers.IntegerField(help_text="상위부대 ID", required=False)
+
+
+class AdminBodySerializer(serializers.Serializer):
+    sn = serializers.CharField(help_text="군번", required=True)
+    unit = serializers.IntegerField(help_text="부대 ID값", required=True)
+    type = serializers.ChoiceField(help_text="관리자 유형", choices=('MASTER', 'ADMIN'))
