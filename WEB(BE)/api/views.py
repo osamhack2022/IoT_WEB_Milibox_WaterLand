@@ -139,6 +139,27 @@ class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         return mous
 
 
+class MOUSSearchViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # SSO를 통한 사용자체계상 이용자 정보 호출
+    """
+
+    serializer_class = MOUSSerializer
+
+    @swagger_auto_schema(query_serializer=MOUSSearchQuerySerializer)
+    def search(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        conditions = {
+            'nm__contains': self.request.GET.get('name', None)
+        }
+
+        mous = MOUS.objects.filter(**conditions)
+        
+        return mous
+
+
 class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
     # 관리자 정보 호출

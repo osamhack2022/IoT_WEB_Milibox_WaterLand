@@ -31,5 +31,9 @@ class MOUSQuerySerializer(serializers.Serializer):
     sn = serializers.CharField(help_text="군번", required=True)
 
 
+class MOUSSearchQuerySerializer(serializers.Serializer):
+    name = serializers.CharField(help_text="이름", required=True)
+
+
 class RecordQuerySerializer(serializers.Serializer):
     id = serializers.IntegerField(help_text="녹화영상 식별자(ID)", required=True)
