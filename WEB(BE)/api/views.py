@@ -227,3 +227,27 @@ class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
         self.request.session['sn'] = self.request.GET.get('sn', None)
         return admin
+
+
+class AdminListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 관리자 목록 호출
+    부대관리자면 해당부대 관리자 목록,
+    최고관리자면 모든관리자 목록을 반환
+    """
+
+    serializer_class = AdminSerializer
+
+    def list(self, request, *args, **kwargs):
+        try:
+            mous = MOUS.objects.get(sn=self.request.session['sn'])
+            admin = Admin.objects.get(user=mous)
+            
+            if admin.type == "MASTER":
+                admins = Admin.objects.all()
+            elif admin.type == "ADMIN":
+                admins = Admin.objects.filter(unit=admin.unit)
+
+            return Response(AdminSerializer(admins, many=True).data)
+        except:
+            raise Http404()
