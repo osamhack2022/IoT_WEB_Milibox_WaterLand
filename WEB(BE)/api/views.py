@@ -95,6 +95,8 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
 class RecordUploadView(views.APIView):
     """
     # 암호화된 영상을 업로드하는 API
+
+    업로드 변수는 "record"로 다중 파일 업로드 가능
     """
 
     parser_classes = (FormParser, MultiPartParser)
@@ -137,7 +139,7 @@ class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         return mous
 
 
-class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
     # 관리자 정보 호출
     """
