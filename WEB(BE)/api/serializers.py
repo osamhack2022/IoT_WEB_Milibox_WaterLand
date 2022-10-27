@@ -42,10 +42,18 @@ class MOUSSerializer(serializers.ModelSerializer):
         model = MOUS
         fields = ('sn', 'rk', 'nm')
 
+
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         record = Admin.objects.all()
         model = Admin
+        fields = '__all__'
+
+
+class OrgSerializer(serializers.ModelSerializer):
+    class Meta:
+        record = Org.objects.all()
+        model = Org
         fields = '__all__'
 
 
@@ -63,3 +71,7 @@ class MOUSSearchQuerySerializer(serializers.Serializer):
 
 class RecordQuerySerializer(serializers.Serializer):
     id = serializers.IntegerField(help_text="녹화영상 식별자(ID)", required=True)
+
+
+class OrgQuerySerializer(serializers.Serializer):
+    parent = serializers.IntegerField(help_text="상위부대 ID", required=False)

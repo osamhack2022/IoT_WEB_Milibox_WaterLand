@@ -181,6 +181,30 @@ class MOUSSearchViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         return mous
 
 
+class OrgViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 부대 정보 호출
+    하위 부대 목록 반환
+    """
+
+    queryset = Org.objects.all()
+
+    serializer_class = OrgSerializer
+
+    @swagger_auto_schema(query_serializer=OrgQuerySerializer)
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        conditions = {
+            'parent': self.request.GET.get('parent', None)
+        }
+
+        orgs = Org.objects.filter(**conditions)
+        
+        return orgs
+
+
 class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
     # 관리자 정보 호출
