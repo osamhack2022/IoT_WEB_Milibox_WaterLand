@@ -48,7 +48,7 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
         user = MOUS.objects.get(sn=user_sn)
         permissions = Permission.objects.filter(allowed_user=user)
-        records = [i.record_id for i in permissions]
+        records = [i.record for i in permissions]
 
         return Response(RecordSerializer(records, many=True).data)
 
@@ -77,7 +77,7 @@ class RecordHistoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View)
 
         record = Record.objects.get(id=record_id)
 
-        historys = ViewHistory.objects.filter(record_id=record)
+        historys = ViewHistory.objects.filter(record=record)
 
         return Response(ViewHistorySerializer(historys, many=True).data)
 
@@ -111,8 +111,9 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
         record_id = self.request.GET.get('id', None)
         record = Record.objects.get(id=record_id)
         viewer_sn = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
+        viewer = MOUS.objects.get(sn=viewer_sn)
         
-        permission = Permission.objects.filter(record_id=record, allowed_user=viewer_sn)
+        permission = Permission.objects.filter(record=record, allowed_user=viewer)
         master = Admin.objects.filter(type='MASTER', sn=viewer_sn)
         admin = Admin.objects.filter(type='ADMIN', sn=viewer_sn, unit=record.unit)
         if record.owner != viewer_sn and not permission.exists() and not master.exists() and not admin.exists():
