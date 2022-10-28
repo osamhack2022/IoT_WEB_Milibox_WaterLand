@@ -98,3 +98,8 @@ class AdminBodySerializer(serializers.Serializer):
     sn = serializers.CharField(help_text="군번", required=True)
     unit = serializers.IntegerField(help_text="부대 ID값", required=True)
     type = serializers.ChoiceField(help_text="관리자 유형", choices=('MASTER', 'ADMIN'))
+
+    
+class ShareBodySerializer(serializers.Serializer):
+    sn = serializers.CharField(help_text="공유해줄 사람 군번", required=True)
+    record_id = serializers.IntegerField(help_text="영상 ID값", required=True)

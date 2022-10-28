@@ -287,3 +287,31 @@ class AdminListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
             return Response(AdminSerializer(admins, many=True).data)
         except:
             raise Http404()
+
+
+class ShareViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 녹화영상 공유 API
+    """
+
+    @swagger_auto_schema(request_body=ShareBodySerializer) 
+    def share(self, request):
+        try:
+            # 공유대상 영상 소유자인지 확인
+            login_user_sn = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
+            login_user = MOUS.objects.get(sn=login_user_sn)
+
+            taker_sn = request.data['sn']
+            taker = MOUS.objects.get(sn=taker_sn)
+            record_id = request.data['record_id']
+            record = Record.objects.get(id=record_id)
+
+            if record.owner == login_user.sn:
+                Permission.objects.create(record=record, allowed_user=taker)
+                content = {'result': 'success'}
+                return Response(content, status=status.HTTP_201_CREATED)
+            else:
+                # 이용자가 소유한 영상이아님.
+                raise Http404()
+        except:
+            raise Http404()

@@ -10,6 +10,7 @@ urlpatterns = [
     path("v1/records/list", RecordListViewSet.as_view({"get": "list"}), name="records"),
     path("v1/records/shared/list", RecordListViewSet.as_view({"get": "sharedlist"}), name="records"),
     path("v1/records/admin/list", RecordListViewSet.as_view({"get": "adminlist"}), name="records"),
+    path("v1/records/share", ShareViewSet.as_view({"post": "share"}), name="share"),
     path("v1/record/history", RecordHistoryViewSet.as_view({"get": "list"}), name="record_history"),
     path("v1/record", RecordViewSet.as_view({"get": "download"}), name="downloadrecord"),
     path("v1/org", OrgViewSet.as_view({"get": "list"}), name="orglist"),
