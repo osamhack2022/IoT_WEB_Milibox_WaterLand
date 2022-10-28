@@ -216,16 +216,12 @@ class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
         return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
-        conditions = {
-            'sn': self.request.GET.get('sn', None)
-        }
-
-        admin = Admin.objects.filter(**conditions)
-        if not admin.exists():
+        try:
+            user = MOUS.objects.get(sn=self.request.GET.get('sn', None))
+            admin = Admin.objects.filter(user=user)
+            return admin
+        except:
             raise Http404()
-
-        self.request.session['sn'] = self.request.GET.get('sn', None)
-        return admin
 
 
     @swagger_auto_schema(request_body=AdminBodySerializer, operation_description='관리자 등록\nMASTER만 관리자등록가능',) 
