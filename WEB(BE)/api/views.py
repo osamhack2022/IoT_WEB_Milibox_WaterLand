@@ -262,7 +262,7 @@ class AdminListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     def list(self, request, *args, **kwargs):
         try:
-            mous = MOUS.objects.get(sn=self.request.session['sn'])
+            mous = MOUS.objects.get(sn=self.request.session.get('sn', request.META.get('HTTP_SN')))
             admin = Admin.objects.get(user=mous)
             
             if admin.type == "MASTER":
