@@ -35,15 +35,32 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     queryset = Record.objects.all()
 
+    @swagger_auto_schema(operation_description='본인이 업로드한 녹화영상 조회API',) 
     def list(self, request, *args, **kwargs):
         user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
-        # Todo: 본인영상이외 공유영상, 관리자권한 영상들도 추가 필요
         records = Record.objects.filter(owner=user_sn)
-        if not records.exists():
-            raise Http404()
 
         return Response(RecordSerializer(records, many=True).data)
 
+
+    @swagger_auto_schema(operation_description='공유받은 녹화영상 조회API',) 
+    def sharedlist(self, request, *args, **kwargs):
+        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user = MOUS.objects.get(sn=user_sn)
+        permissions = Permission.objects.filter(allowed_user=user)
+        records = [i.record_id for i in permissions]
+
+        return Response(RecordSerializer(records, many=True).data)
+
+    @swagger_auto_schema(operation_description='관리자 담당부대에서 업로드한 녹화영상 조회API',) 
+    def adminlist(self, request, *args, **kwargs):
+        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user = MOUS.objects.get(sn=user_sn)
+        admin = Admin.objects.get(user=user)
+        
+        records = Record.objects.filter(unit=admin.unit.name)
+
+        return Response(RecordSerializer(records, many=True).data)
 
 class RecordHistoryViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
     """
