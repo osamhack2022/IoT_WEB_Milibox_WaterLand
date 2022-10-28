@@ -36,8 +36,7 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
     queryset = Record.objects.all()
 
     def list(self, request, *args, **kwargs):
-        user_sn = self.request.session['sn']
-
+        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
         # Todo: 본인영상이외 공유영상, 관리자권한 영상들도 추가 필요
         records = Record.objects.filter(owner=user_sn)
         if not records.exists():
@@ -94,7 +93,7 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     def download(self, *args, **kwargs):
         record_id = self.request.GET.get('id', None)
         record = Record.objects.get(id=record_id)
-        viewer_sn = self.request.session['sn']
+        viewer_sn = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
         
         permission = Permission.objects.filter(record_id=record, allowed_user=viewer_sn)
         master = Admin.objects.filter(type='MASTER', sn=viewer_sn)
@@ -124,7 +123,7 @@ class RecordUploadView(views.APIView):
 
     #@swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
     def post(self, request, format=None):
-        user_sn = self.request.session['sn']
+        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
         decrypter = MiliboxDecrypter()
         for encrypted_file in request.FILES.getlist('record'):
             result, military_unit_code, content = decrypter.decrypt_file(encrypted_file)
@@ -232,7 +231,7 @@ class AdminViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
     @swagger_auto_schema(request_body=AdminBodySerializer, operation_description='관리자 등록\nMASTER만 관리자등록가능',) 
     def add(self, request):
         try:
-            login_user = self.request.session['sn']
+            login_user = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
             admin = Admin.objects.get(user=login_user)
             if admin.type == "Master":
                 user = MOUS.objects.get(sn=request.data['sn'])
