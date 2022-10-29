@@ -2,13 +2,24 @@ from django.db import models
 
 # 영상파일
 class Record(models.Model):
+    APPROVAL_STATUS = (
+        ('NOTHING', '반출신청안함'),
+        ('PENDING', '승인요청중'),
+        ('APPROVED', '승인됨'),
+        ('REJECTED', '거절됨'),
+    )
     id = models.BigAutoField(primary_key=True, verbose_name='영상 ID값')
     file_name = models.CharField(null=False, max_length=255, verbose_name='파일명')
     file = models.FileField(null=True, verbose_name='영상파일')
     owner = models.CharField(null=False, max_length=20, verbose_name='소유자 군번')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='추가된 날짜')
-    approved_at = models.DateTimeField(auto_now=True, verbose_name='업뎃 된 날짜')
-    unit = models.CharField(null=False, max_length=255, verbose_name='녹화된 부대')
+    approval_comment = models.CharField(default=None, null=True, max_length=200, verbose_name='반출 요청 사유')
+    request_at = models.DateTimeField(null=True, verbose_name='반출 요청 날짜')
+    approval_status = models.CharField(default='NOTHING', null=False, max_length=10, choices=APPROVAL_STATUS, verbose_name='반출 승인 상태')
+    approved_at = models.DateTimeField(null=True, verbose_name='반출 승인 날짜')
+    approver = models.ForeignKey("MOUS", null=True, default=None, on_delete=models.CASCADE, verbose_name='반출 승인 처리자')
+    reject_comment = models.CharField(default=None, null=True, max_length=200, verbose_name='반출 요청 거절 사유')
+    unit = models.ForeignKey("Org", null=True, on_delete=models.CASCADE, verbose_name='녹화된 부대')
 
     def __str__(self):
         return f"{self.file_name} {self.owner} {self.unit}"
@@ -31,7 +42,12 @@ class Permission(models.Model):
     record = models.ForeignKey("Record", on_delete=models.CASCADE, verbose_name='녹화영상 ID값')
     allowed_user = models.ForeignKey("MOUS", on_delete=models.CASCADE, verbose_name='권한부여받은 유저 군')
 
+
 # 반출 요청/승인
+class Approval(models.Model):
+    id = models.BigAutoField(primary_key=True, verbose_name='조회권한 ID값')
+    record = models.ForeignKey("Record", on_delete=models.CASCADE, verbose_name='녹화영상 ID값')
+    allowed_user = models.ForeignKey("MOUS", on_delete=models.CASCADE, verbose_name='권한부여받은 유저 군')
 
 
 

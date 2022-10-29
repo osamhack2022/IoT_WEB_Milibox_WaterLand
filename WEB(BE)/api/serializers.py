@@ -2,11 +2,16 @@ from .models import *
 from rest_framework import serializers
 
 class RecordSerializer(serializers.ModelSerializer):
+    unit_name = serializers.SerializerMethodField()
+
+    def get_unit_name(self, obj):
+        return obj.unit.name
+
     class Meta:
         record = Record.objects.all()
         model = Record
-        fields = ('id', 'file_name', 'owner', 'created_at', 'approved_at','unit',)
-        #fields = '__all__'  # __all__ 을 줄 경우, 모든 필드가 사용됨.
+        #fields = ('id', 'file_name', 'owner', 'created_at', 'approved_at','unit', 'unit_name')
+        fields = '__all__'  # __all__ 을 줄 경우, 모든 필드가 사용됨.
         # fields = ('id', 'created_at', 'title', 'category', 'star_rating',)  # req, res 시 사용되길 원하는 필드(컬럼)만 적어줘도 됨.
 
 
@@ -37,10 +42,19 @@ class ViewHistorySerializer(serializers.ModelSerializer):
 
 
 class MOUSSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField()
+
+    def get_type(self, obj):
+        try:
+            admin = Admin.objects.get(user=obj)
+            return admin.type
+        except:
+            return "User"
+
     class Meta:
         mous = MOUS.objects.all()
         model = MOUS
-        fields = ('sn', 'rk', 'nm')
+        fields = ('sn', 'rk', 'nm', 'type')
 
 
 class AdminSerializer(serializers.ModelSerializer):
@@ -103,3 +117,13 @@ class AdminBodySerializer(serializers.Serializer):
 class ShareBodySerializer(serializers.Serializer):
     sn = serializers.CharField(help_text="공유해줄 사람 군번", required=True)
     record_id = serializers.IntegerField(help_text="영상 ID값", required=True)
+
+
+class ApprovalRequestBodySerializer(serializers.Serializer):
+    comment = serializers.CharField(help_text="반출 사유", required=True)
+    record_id = serializers.IntegerField(help_text="승인 요청 영상 ID값", required=True)
+
+
+class ApprovalResponseBodySerializer(serializers.Serializer):
+    comment = serializers.CharField(help_text="거절시 거절 사유", required=False)
+    record_id = serializers.IntegerField(help_text="승인 요청 영상 ID값", required=True)

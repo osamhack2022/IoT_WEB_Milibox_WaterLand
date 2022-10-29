@@ -17,6 +17,9 @@ from .models import *
 from .serializers import *
 from rest_framework import views
 from milibox_decrypter import MiliboxDecrypter
+from datetime import datetime
+from django.utils import timezone
+
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -320,6 +323,70 @@ class ShareViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
                 return Response(content, status=status.HTTP_201_CREATED)
             else:
                 # 이용자가 소유한 영상이아님.
+                raise Http404()
+        except:
+            raise Http404()
+
+
+class ApprovalViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
+    """
+    # 반출 승인
+    """
+
+    serializer_class = RecordSerializer
+
+    @swagger_auto_schema(operation_description='관리자가 승인할수있는 승인 요청 목록',) 
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        try:
+            user_sn = self.request.META.get('HTTP_SN')
+            print(user_sn)
+
+            user = MOUS.objects.get(sn=user_sn)
+            admin = Admin.objects.get(user=user)
+            if admin.type == "MASTER":
+                records = Record.objects.filter(approval_status='PENDING')
+            elif admin.type == "ADMIN":
+                records = Record.objects.filter(approval_status='PENDING', unit=admin.unit)
+            return records
+        except:
+            raise Http404()
+
+
+    @swagger_auto_schema(request_body=ApprovalRequestBodySerializer, operation_description='반출 요청',) 
+    def request(self, request):
+        user_sn = self.request.META.get('HTTP_SN')
+        print(user_sn)
+
+        record_id = request.data['record_id']
+        comment = request.data['comment']
+
+        record = Record.objects.get(id=record_id)
+        if record.approval_status == 'NOTHING':
+            record.approval_status = 'PENDING'
+            record.approval_comment = comment
+            record.request_at = timezone.now()
+            record.save()
+            return Response(RecordSerializer(record).data, status=status.HTTP_201_CREATED)
+        else:
+            raise Http404()
+        try:
+            user_sn = self.request.META.get('HTTP_SN')
+            print(user_sn)
+
+            record_id = request.data['record_id']
+            comment = request.data['comment']
+
+            record = Record.objects.get(id=record_id)
+            if record.approval_status == 'NOTHING':
+                record.approval_status = 'PENDING'
+                record.approval_comment = comment
+                record.request_at = datetime.now().time()
+                record.save()
+                return Response(RecordSerializer(record).data, status=status.HTTP_201_CREATED)
+            else:
                 raise Http404()
         except:
             raise Http404()
