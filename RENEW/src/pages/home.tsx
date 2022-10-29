@@ -14,12 +14,16 @@ export const HomePage = observer(() => {
   const [records, setRecords] = useState<Record[]>([])
 
   useEffect(() => {
+    handleData()
+  }, [])
+
+  const handleData = () => {
     API.get('/records/list', {
       headers: {
         sn: userStore.user?.sn,
       },
     }).then((res) => setRecords(res.data))
-  }, [])
+  }
 
   // modal
   const [showUploadModal, setShowUploadModal] = useState<boolean>(false)
@@ -52,13 +56,14 @@ export const HomePage = observer(() => {
           return API.post('/upload', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
-              sn: userStore.user?.sn
+              sn: userStore.user?.sn,
             },
           })
         })
       )
       setShowUploadModal(false)
       setFiles([])
+      handleData()
     } catch (e) {
       console.error(e)
       toast.error('오류가 발생했습니다.')
@@ -78,7 +83,7 @@ export const HomePage = observer(() => {
           </button>
         </div>
         <div className="bg-white rounded-xl border p-5">
-          <RecordList records={records} />
+          <RecordList records={records} onUpdate={() => handleData()} />
         </div>
       </div>
       <Modal open={showUploadModal} onClose={() => setShowUploadModal(false)}>

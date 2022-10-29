@@ -2,7 +2,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import { Layout } from '../components/layout'
 import { AdminHomePage } from '../pages/admin/home'
 import { AdminUserPage } from '../pages/admin/user'
-import { ApplyPage } from '../pages/apply'
 import { HomePage } from '../pages/home'
 import { LoginPage } from '../pages/login'
 import { SharedPage } from '../pages/shared'
@@ -13,9 +12,6 @@ const router = createBrowserRouter([{
 }, {
   path: '/shared',
   element: <Layout><SharedPage /></Layout>
-}, {
-  path: '/apply',
-  element: <Layout><ApplyPage /></Layout>
 }, {
   path: '/admin',
   children: [{

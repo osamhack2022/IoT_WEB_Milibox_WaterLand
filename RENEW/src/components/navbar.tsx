@@ -45,10 +45,6 @@ const NavbarContent = () => {
         <i className="fa-solid fa-share-nodes mr-3" />
         공유받은 영상
       </NavLink>
-      <NavLink to="/apply" className={activeLinkClassName}>
-        <i className="fa-solid fa-shuffle mr-3" />
-        영상 복호화 신청내역
-      </NavLink>
       {userStore.user?.type === 'MASTER' && (
         <>
           <NavLink to="/admin/user" className={activeLinkClassName} end>
