@@ -7,6 +7,7 @@ urlpatterns = [
     path("v1/user/search", MOUSSearchViewSet.as_view({"get": "search"}), name="moussearch"),
     path("v1/admin", AdminViewSet.as_view({"get": "list", "post": "add"}), name="admin"),
     path("v1/admin/list", AdminListViewSet.as_view({"get": "list"}), name="admin-list"),
+    path("v1/admin/takeout", ApprovalViewSet.as_view({"post": "approve"}), name="approve"),
     path("v1/admin/takeout/list", ApprovalViewSet.as_view({"get": "list"}), name="admin-takeout-list"),
     path("v1/records/list", RecordListViewSet.as_view({"get": "list"}), name="records"),
     path("v1/records/shared/list", RecordListViewSet.as_view({"get": "sharedlist"}), name="records"),

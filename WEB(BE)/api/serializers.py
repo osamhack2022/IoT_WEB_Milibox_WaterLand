@@ -127,3 +127,4 @@ class ApprovalRequestBodySerializer(serializers.Serializer):
 class ApprovalResponseBodySerializer(serializers.Serializer):
     comment = serializers.CharField(help_text="거절시 거절 사유", required=False)
     record_id = serializers.IntegerField(help_text="승인 요청 영상 ID값", required=True)
+    action = serializers.CharField(help_text="APPROVE / REJECT", required=True)
