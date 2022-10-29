@@ -37,7 +37,8 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     @swagger_auto_schema(operation_description='본인이 업로드한 녹화영상 조회API',) 
     def list(self, request, *args, **kwargs):
-        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user_sn = request.META.get('HTTP_SN')
+        print(user_sn)
         records = Record.objects.filter(owner=user_sn)
 
         return Response(RecordSerializer(records, many=True).data)
@@ -45,7 +46,8 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     @swagger_auto_schema(operation_description='공유받은 녹화영상 조회API',) 
     def sharedlist(self, request, *args, **kwargs):
-        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user_sn = request.META.get('HTTP_SN')
+        print(user_sn)
         user = MOUS.objects.get(sn=user_sn)
         permissions = Permission.objects.filter(allowed_user=user)
         records = [i.record for i in permissions]
@@ -54,7 +56,8 @@ class RecordListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     @swagger_auto_schema(operation_description='관리자 담당부대에서 업로드한 녹화영상 조회API',) 
     def adminlist(self, request, *args, **kwargs):
-        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user_sn = request.META.get('HTTP_SN')
+        print(user_sn)
         user = MOUS.objects.get(sn=user_sn)
         admin = Admin.objects.get(user=user)
         
@@ -110,16 +113,17 @@ class RecordViewSet(viewsets.ReadOnlyModelViewSet):
     def download(self, *args, **kwargs):
         record_id = self.request.GET.get('id', None)
         record = Record.objects.get(id=record_id)
-        viewer_sn = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
+        viewer_sn = self.request.GET.get('sn', None)
+        print(viewer_sn)
         viewer = MOUS.objects.get(sn=viewer_sn)
         
         permission = Permission.objects.filter(record=record, allowed_user=viewer)
-        master = Admin.objects.filter(type='MASTER', sn=viewer_sn)
-        admin = Admin.objects.filter(type='ADMIN', sn=viewer_sn, unit=record.unit)
+        master = Admin.objects.filter(type='MASTER', user=viewer)
+        admin = Admin.objects.filter(type='ADMIN', user=viewer, unit=record.unit)
         if record.owner != viewer_sn and not permission.exists() and not master.exists() and not admin.exists():
             raise Http404()
-
-        ViewHistory.objects.create(viewer=viewer_sn, ip_address=get_client_ip(self.request), record_id=record)
+    
+        ViewHistory.objects.create(viewer=viewer, ip_address=get_client_ip(self.request), record=record)
 
         file_handle = record.file.open()
 
@@ -141,16 +145,19 @@ class RecordUploadView(views.APIView):
 
     #@swagger_auto_schema(operation_description='암호화된 영상을 업로드하는 API',)
     def post(self, request, format=None):
-        user_sn = self.request.session.get('sn', request.META.get('HTTP_SN'))
+        user_sn = request.META.get('HTTP_SN')
+        print(user_sn)
         decrypter = MiliboxDecrypter()
+        print(request.FILES)
         for encrypted_file in request.FILES.getlist('record'):
             result, military_unit_code, content = decrypter.decrypt_file(encrypted_file)
             if result == True:
                 filename = encrypted_file.name.split('.milibox')[0]
-                file = ContentFile(content, name=f"{filename}.h264")
-                Record.objects.create(file_name=filename, file=file, owner=user_sn, unit=military_unit_code)
+                file = ContentFile(content, name=f"{filename}")
+                unit = Org.objects.get(id=military_unit_code)
+                Record.objects.create(file_name=filename, file=file, owner=user_sn, unit=unit)
             print(f"파일업로드: {encrypted_file.name} {result} 부대: {military_unit_code}")
-        return Response(status=204)
+        return Response(status=200)
 
 
 class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View): 
@@ -166,14 +173,13 @@ class MOUSViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     def get_queryset(self):
         conditions = {
-            'sn': self.request.GET.get('sn', None)
+            'sn': self.request.GET.get('sn', self.request.META.get('HTTP_SN'))
         }
 
         mous = MOUS.objects.filter(**conditions)
         if not mous.exists():
             raise Http404()
 
-        self.request.session['sn'] = self.request.GET.get('sn', None)
         return mous
 
 
@@ -190,8 +196,9 @@ class MOUSSearchViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
 
     def get_queryset(self):
         conditions = {
-            'nm__contains': self.request.GET.get('name', None)
+            'nm__contains': self.request.GET.get('name', '')
         }
+        print(self.request.GET.get('name', None))
 
         mous = MOUS.objects.filter(**conditions)
 
@@ -275,8 +282,9 @@ class AdminListViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
     serializer_class = AdminSerializer
 
     def list(self, request, *args, **kwargs):
+        print(request.META.get('HTTP_SN'))
         try:
-            mous = MOUS.objects.get(sn=self.request.session.get('sn', request.META.get('HTTP_SN')))
+            mous = MOUS.objects.get(sn=request.META.get('HTTP_SN'))
             admin = Admin.objects.get(user=mous)
             
             if admin.type == "MASTER":
@@ -298,7 +306,7 @@ class ShareViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, View):
     def share(self, request):
         try:
             # 공유대상 영상 소유자인지 확인
-            login_user_sn = self.request.session.get('sn', self.request.META.get('HTTP_SN'))
+            login_user_sn = request.META.get('HTTP_SN')
             login_user = MOUS.objects.get(sn=login_user_sn)
 
             taker_sn = request.data['sn']
