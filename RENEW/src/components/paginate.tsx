@@ -33,7 +33,7 @@ export const Paginate = (props: PaginateProps) => {
     const currentItems = items.slice(itemOffset, endOffset)
     setPageCount(Math.ceil(items.length / itemPerPage))
     onPaginate(currentItems)
-  }, [itemOffset])
+  }, [items, itemOffset])
 
   const handlePageClick = (event: any) => {
     const newOffset = (event.selected * 5) % items.length

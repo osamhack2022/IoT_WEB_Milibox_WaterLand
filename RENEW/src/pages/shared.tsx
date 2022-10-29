@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { API, BASE_URL } from '../api/base'
+import { API } from '../api/base'
 import { Modal } from '../components/modal'
 import { Record } from '../types/type'
 import { Paginate } from '../components/paginate'
 import { toast } from 'react-toastify'
 import { userStore } from '../stores/user'
-import { observer } from 'mobx-react'
-import { RecordList } from '../components/record-list'
 
-export const HomePage = observer(() => {
+export const SharedPage = () => {
   // records
   const [records, setRecords] = useState<Record[]>([])
+  const [filteredRecords, setFilteredRecords] = useState<Record[]>([])
 
   useEffect(() => {
-    API.get('/records/list', {
+    API.get('/records/shared/list', {
       headers: {
         sn: userStore.user?.sn,
       },
@@ -48,11 +47,10 @@ export const HomePage = observer(() => {
       await Promise.all(
         files.map((file) => {
           const formData = new FormData()
-          formData.append('record', file)
+          formData.append('record[]', file)
           return API.post('/upload', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
-              sn: userStore.user?.sn
             },
           })
         })
@@ -78,7 +76,32 @@ export const HomePage = observer(() => {
           </button>
         </div>
         <div className="bg-white rounded-xl border p-5">
-          <RecordList records={records} />
+          <table className="w-full table-auto mb-5">
+            <thead>
+              <tr className='border-b'>
+                <th className='py-2'>파일이름</th>
+                <th className='py-2'>추가일시</th>
+                <th className='py-2'>반출여부</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRecords.map((record) => (
+                <tr key={record.id}>
+                  <td className='text-center py-2'>{record.file_name}</td>
+                  <td className='text-center py-2'>{record.created_at}</td>
+                  <td className='text-center py-2'>{record.approved_at ? '반출승인됨' : '승인안됨'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="flex justify-center">
+            <Paginate
+              items={records}
+              pageCount={0}
+              onPaginate={(items) => setFilteredRecords(items)}
+            />
+          </div>
         </div>
       </div>
       <Modal open={showUploadModal} onClose={() => setShowUploadModal(false)}>
@@ -135,4 +158,4 @@ export const HomePage = observer(() => {
       </Modal>
     </>
   )
-})
+}
