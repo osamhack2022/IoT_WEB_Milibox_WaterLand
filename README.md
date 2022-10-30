@@ -1,11 +1,115 @@
-### 국방 블랙박스 (군부대 출입차량용 영상기록 체계)
-# 아이템 개요
-군부대는 부대구조나 보안시설 노출 방지를 위해 사진 촬영, 동영상 녹화가 금지되어있습니다. 그렇기에 개인용 휴대전화의 카메라를 MDM 소프트웨어(국방모바일보안)로 부대출입시 차단하고, 차량용 영상기록장치(블랙박스)는 부대에서 제공하는 가림막을 설치한뒤 출입합니다. 매 출입시 가림막을 설치했다가 제거했다가를 매일 반복해야함을 물론 가림막을 해놓으면 부대내에서 블랙박스를 활용할 수 없습니다. 이를 해결하고자 군부대용 차세대 블랙박스를 고안했습니다. 해당 블랙박스를 이용시 군 부대 이외의 지역에서 는 일반적인 블랙박스와 같이 작동합니다.
 
-부대 출입시 RF모듈을 통해 통신하여 출입을 인식하여 부대로 들어온경우 블랙박스가 촬영은 하지만 이를 암호화하여 메모리에 저장합니다. 암호화된 영상은 블랙박스 소유주는 열람할 수 없습니다. 만약 부대 내에서 주행중 사고나 주차중 사고등으로 열람이 필요한 경우 인트라넷(국방망) 웹에서 부대내 차량용 영상기록판독요청체계를 이용하여 운전자가 암호화된 영상을 제출하면 관련 부서에서 체계에서 자동으로 복호화된 영상을 보고 필요한 부분만을 체계를 통해 운전자에게 제공하거나 관련 수사를 진행 할 수 있도록합니다.
-부대를 벗어나는 경우 부대내에서 촬영된 암호화된 영상파일은 자동으로 삭제처리하고 일반적인 블랙박스로 다시 전환하여 암호화되지않는 영상파일로 녹화를 합니다.
+# 국방 블랙박스 (군부대 출입차량용 암호화 영상기록 체계)
 
-추가기능들로는 부대내에서 군사시설 보안을 위해 상업용 네비게이션의 지도데이터가 없어 작동하지않는데, 부대내의 곳에 설치된 RF모듈 통신을 통해 속도제한 등의 정보를 수신하여 차량의 속도가 제한속도보다 넘는 경우 알림음을 내는 등의 기능도 생각해볼수 있습니다.
+<div align=center>
+
+![Logo](https://logosbynick.com/wp-content/uploads/2018/03/final-logo-example.png)
+</div>
+  <center><h3>국방 블랙박스 : 군부대 출입차량용 암호화 영상기록 체계</h3></center>
+><center><h3>보안과 편리성을 위한 암호화 블랙박스</h3></center>
+
+## 목차
+
+1. [개요](#%EA%B0%9C%EC%9A%94-abstract)
+2. [소개](#%EC%86%8C%EA%B0%9C-introduction)
+3. [시연 영상](#%EC%86%8C%EA%B0%9C-%EC%98%81%EC%83%81-video-clips)
+4. [기능 설명](#%EA%B8%B0%EB%8A%A5-%EC%84%A4%EB%AA%85-functions)
+5. [기기 구성/필수 조건 안내](#%EA%B8%B0%EA%B8%B0-%EA%B5%AC%EC%84%B1--%ED%95%84%EC%88%98-%EC%A1%B0%EA%B1%B4-%EC%95%88%EB%82%B4-prerequisites)
+6. [기술 스택](#%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D-technique-used)
+7. [설치 안내](#%EC%84%A4%EC%B9%98-%EC%95%88%EB%82%B4-installation-process)
+8. [프로젝트 관리 및 개발 문서](#-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B4%80%EB%A6%AC-%EB%B0%8F-%EA%B0%9C%EB%B0%9C-%EB%AC%B8%EC%84%9C-project-management)
+9. [팀 정보](#%ED%8C%80-%EC%A0%95%EB%B3%B4-team-information)
+10. [저작권 및 사용권 정보](#%EC%A0%80%EC%9E%91%EA%B6%8C-%EB%B0%8F-%EC%82%AC%EC%9A%A9%EA%B6%8C-%EC%A0%95%EB%B3%B4-copyleft--end-user-license)
+
+
+## 개요 (Abstract)
+군부대는 부대구조나 보안시설 노출 방지를 위해 사진 촬영, 동영상 녹화가 금지되어있습니다. 그렇기에 개인용 휴대전화의 카메라를 MDM 소프트웨어(국방모바일보안)로 부대출입시 차단하고, 차량용 영상기록장치(블랙박스)는 부대에서 제공하는 가림막을 설치한뒤 출입합니다. 매 출입시 가림막을 설치했다가 제거했다가를 매일 반복해야함을 물론 가림막을 해놓으면 부대내에서 블랙박스를 활용할 수 없습니다. 이를 해결하고자 군부대용 차세대 블랙박스를 고안했습니다. 
+  
+## 소개 (Introduction)
+해당 블랙박스를 이용시 군 부대 이외의 지역에서 는 일반적인 블랙박스와 같이 작동합니다. 부대 출입시 RF모듈을 통해 통신하여 출입을 인식하여 부대로 들어온경우 블랙박스가 촬영은 하되 영상을 암호화하여 메모리에 저장합니다. 암호화된 영상파일은 블랙박스 소유주라도 마음대로 열람할 수 없습니다. 만약 부대 내에서 주행중 사고나 주차중 사고등으로 열람이 필요한 경우 인트라넷(국방망) 웹에서 부대내 차량용 영상기록판독요청체계를 이용하여 암호화파일을 업로드하면 서버에서 복호화를 진행하여 웹을 통해 재생이 가능합니다. 사고 수사 등으로 운전자가 사고 영상을 군내에 사고처리 담당자 등 제출해야하는 경우 웹체계내에서 담당자를 지정하여 제출이가능하고, 군외부로 반출이 필요한 경우 반출 요청을 하고 부대관리자의 승인을 통해 외부 인터넷망으로 반출이 가능합니다.
+
+  
+## 소개 영상 (Video Clips)
+
+## 기능 설명 (Functions)
+* 로그인 화면
+<div align=center>
+
+![Logo](/Docs/Images/login.png)
+</div>
+
+* 초기 화면(일반 사용자)
+<div align=center>
+
+![Logo](/Docs/Images/list1.png)
+</div>
+
+* 영상 업로드 과정
+<div align=center>
+
+![Logo](/Docs/Images/upload.png)
+
+![Logo](/Docs/Images/upload2.png)
+</div>
+
+* 영상 업로드 완료 화면
+<div align=center>
+
+![Logo](/Docs/Images/list2.png)
+</div>
+
+
+* 영상 조회 화면 - 복호화된 블랙박스 영상을 조회할 수 있습니다.
+<div align=center>
+
+![Logo](/Docs/Images/view1.png)
+</div>
+
+* 해당 영상을 조회한 사용자 목록 및 정보를 확인할 수 있습니다. 또한 다른 사용자가 영상을 조회할 수 있도록 해주는 “공유하기” 기능도 사용할 수 있습니다.
+<div align=center>
+
+![Logo](/Docs/Images/view2.png)
+</div>
+
+* 공유받은 영상 - 다른 사용자로부터 공유받은 영상을 조회할 수 있습니다.
+<div align=center>
+
+![Logo](/Docs/Images/sharelist.png)
+</div>
+
+
+* 영상은 “반출 신청”을 통해 자료교환체계를 이용하여 보험사 혹은 수사기관에 제출할 수 있습니다.
+<div align=center>
+
+![Logo](/Docs/Images/view3.png)
+</div>
+
+* 반출 신청 완료 화면
+<div align=center>
+
+![Logo](/Docs/Images/takeout.png)
+</div>
+
+* 사용자 정보 화면
+<div align=center>
+
+![Logo](/Docs/Images/admincreate.png)
+</div>
+
+* 사용자 관리 화면(최고관리자 전용)
+<div align=center>
+
+![Logo](/Docs/Images/adminlist.png)
+</div>
+
+* 영상 반출 승인 관리(부대관리자 전용) - 사용자가 반출 신청한 영상에 보안 위반 소지가 있는지 검토하고, 해당 영상의 반출을 승인·거절할 수 있습니다.
+<div align=center>
+
+![Logo](/Docs/Images/approvelist.png)
+![Logo](/Docs/Images/approve1.png)
+</div>
+
+
 
 # 개발 계획 및 목표
 1주차: 아이디어 세부 기획
@@ -30,7 +134,7 @@
 6,7주차: 영상 및 문서 준비
 
 매주 2회정도의 회의
-
+[국방 블랙박스 케이스 3D 모델링 Tinkercad](https://www.tinkercad.com/things/4JHKmULFASb)
 # 기대 효과 및 전망
 부대 내에서 그동안 군사보안을 위해 교통안전과 사고처리에 블랙박스를 활용하지 못하였는데 본 솔루션으로 두마리 토끼를 잡을수있습니다. 또, 부대내에서 블랙박스 가림막을 제대로 설치하지않아 군사보안 유출의 우려를 줄일 수 있습니다. 마지막으로 사용자는 매번 가림막 설치,제거를 번거롭게 할 필요가 없어집니다.
 
@@ -40,7 +144,7 @@
 
 
 # Project name or Logo
-![Logo](https://logosbynick.com/wp-content/uploads/2018/03/final-logo-example.png)
+
 
 프로젝트명 또는 프로젝트 로고 이미지 **(택1)**
 
@@ -67,10 +171,41 @@
  - 기타 사용한 라이브러리
 
 ## 설치 안내 (Installation Process)
+### Web(Back-end)
 ```bash
-$ git clone git주소
-$ yarn or npm install
-$ yarn start or npm run start
+$ git clone https://github.com/osamhack2022-v2/IoT_WEB_Milibox_WaterLand
+$ cd WEB(BE)/
+$ python -m venv <venv_name>
+$ <venv_name>/Scripts/activate.bat
+$ pip install -r requirements.txt
+$ python manage.py runserver <ip>:<port>
+```
+
+### Web(Front-end)
+```bash
+$ git clone https://github.com/osamhack2022-v2/IoT_WEB_Milibox_WaterLand
+$ cd WEB(FE)/
+$ 
+```
+
+### IoT(Raspberry Pi) (블랙박스)
+```bash
+$ git clone https://github.com/osamhack2022-v2/IoT_WEB_Milibox_WaterLand
+$ cd IoT(Raspberry Pi)/BlackBox_Device/
+$ python -m venv <venv_name>
+$ <venv_name>\Scripts\activate
+$ pip install -r requirements.txt
+$ python milibox.py
+```
+
+### IoT(Raspberry Pi) (위병소 통신 장비)
+```bash
+$ git clone https://github.com/osamhack2022-v2/IoT_WEB_Milibox_WaterLand
+$ cd IoT(Raspberry Pi)/Gate_Device/
+$ python -m venv <venv_name>
+$ <venv_name>\Scripts\activate
+$ pip install -r requirements.txt
+$ python milibox.py
 ```
 
 ## 프로젝트 사용법 (Getting Started)
