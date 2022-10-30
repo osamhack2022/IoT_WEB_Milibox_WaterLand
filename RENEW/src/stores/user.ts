@@ -10,6 +10,7 @@ class UserStore {
   }
 
   login(user: LoggedInUser) {
+    console.log(user)
     this.loggedIn = true
     this.user = user
   }

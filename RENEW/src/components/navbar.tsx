@@ -4,14 +4,24 @@ import 'react-modern-drawer/dist/index.css'
 import { Link, NavLink } from 'react-router-dom'
 import { userStore } from '../stores/user'
 
-export const Navbar = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false)
+export const Navbar = ({
+  showDrawer,
+  setShowDrawer,
+}: {
+  showDrawer: boolean;
+  setShowDrawer: any;
+}) => {
   return (
     <>
-      <Drawer open={isDrawerOpen} direction="left" className="">
+      <Drawer
+        open={showDrawer}
+        direction="left"
+        className=""
+        onClose={() => setShowDrawer(false)}
+      >
         <NavbarContent />
       </Drawer>
-      <div className="border-r">
+      <div className="border-r hidden md:block">
         <NavbarContent />
       </div>
     </>

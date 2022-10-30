@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Paginate } from './paginate'
-import { History, Record } from '../types/type'
+import { History, Record, User } from '../types/type'
 import { Modal } from './modal'
 import { API, BASE_URL } from '../api/base'
 import { userStore } from '../stores/user'
 import { format } from 'date-fns'
 import { toast } from 'react-toastify'
 import { observer } from 'mobx-react'
+import Select from 'react-select'
 
 interface RecordListProps {
   records: Record[];
@@ -47,11 +48,13 @@ export const RecordList = observer(
         const answer = confirm('해당 영상을 반출 신청하시겠습니까?')
         if (answer) {
           const res = await API.get(
-            `/records/takeout?record_id=${selectedRecordId}&comment=${comment}`, {
+            `/records/takeout?record_id=${selectedRecordId}&comment=${comment}`,
+            {
               headers: {
                 sn: userStore.user?.sn,
               },
-            })
+            }
+          )
           toast.success('반출 신청되었습니다!')
           setShowVideoModal(false)
         }
@@ -63,14 +66,25 @@ export const RecordList = observer(
       }
     }
 
+    // share
+    const [showShareModal, setShowShareModal] = useState<boolean>(false)
+    const [searchedUsers, setSearchedUsers] = useState<User[]>([])
+    const [selectedUserSN, setSelectedUserSN] = useState<string>()
+    const openShareModal = async () => {
+      const res = await API.get<User[]>('/user/search?name=')
+      setSearchedUsers(res.data)
+      setShowShareModal(true)
+    }
     const handleShare = async () => {
       try {
-        const sn = prompt('공유할 사람의 군번을 입력하세요.')
-        const res = await API.get(`/records/share?record_id=${selectedRecordId}&sn=${sn}`, {
-          headers: {
-            sn: userStore.user?.sn,
-          },
-        })
+        const res = await API.get(
+          `/records/share?record_id=${selectedRecordId}&sn=${selectedUserSN}`,
+          {
+            headers: {
+              sn: userStore.user?.sn,
+            },
+          }
+        )
         toast.success('공유되었습니다!')
         setShowVideoModal(false)
       } catch (e) {
@@ -85,11 +99,14 @@ export const RecordList = observer(
       try {
         const answer = confirm('승인하시겠습니까?')
         if (answer) {
-          const res = await API.get(`/admin/takeout?record_id=${selectedRecordId}&action=APPROVE`, {
-            headers: {
-              sn: userStore.user?.sn,
-            },
-          })
+          const res = await API.get(
+            `/admin/takeout?record_id=${selectedRecordId}&action=APPROVE`,
+            {
+              headers: {
+                sn: userStore.user?.sn,
+              },
+            }
+          )
           toast.success('승인되었습니다!')
           setShowVideoModal(false)
         }
@@ -105,11 +122,14 @@ export const RecordList = observer(
       try {
         const answer = confirm('거절하시겠습니까?')
         if (answer) {
-          const res = await API.get(`/admin/takeout?record_id=${selectedRecordId}&action=REJECT`, {
-            headers: {
-              sn: userStore.user?.sn,
-            },
-          })
+          const res = await API.get(
+            `/admin/takeout?record_id=${selectedRecordId}&action=REJECT`,
+            {
+              headers: {
+                sn: userStore.user?.sn,
+              },
+            }
+          )
           toast.success('거절되었습니다!')
           setShowVideoModal(false)
         }
@@ -131,12 +151,14 @@ export const RecordList = observer(
             <tr className="border-b">
               <th className="border px-3 py-2 bg-gray-100">파일이름</th>
               <th className="border px-3 py-2 bg-gray-100">추가일시</th>
+              <th className="border px-3 py-2 bg-gray-100">촬영부대</th>
               <th className="border px-3 py-2 bg-gray-100">반출여부</th>
             </tr>
           </thead>
           <tbody>
             {filteredRecords.map((record) => {
-              const { id, file_name, created_at, approval_status } = record
+              const { id, file_name, created_at, unit_name, approval_status } =
+                record
               return (
                 <tr
                   key={id}
@@ -147,6 +169,7 @@ export const RecordList = observer(
                   <td className="text-center border px-3 py-2">
                     {format(new Date(created_at), 'yyyy-MM-dd HH:mm:ss')}
                   </td>
+                  <td className="text-center border px-3 py-2">{unit_name}</td>
                   <td className="text-center border px-3 py-2">
                     {approval_status === 'APPROVED' && '승인됨'}
                     {approval_status === 'REJECTED' && '거절됨'}
@@ -226,12 +249,38 @@ export const RecordList = observer(
               </button>
               <button
                 className="flex-none bg-primary text-white font-bold px-3 py-2 rounded-lg"
-                onClick={handleShare}
+                onClick={openShareModal}
               >
                 공유하기
               </button>
             </div>
           )}
+        </Modal>
+        <Modal open={showShareModal} onClose={() => setShowShareModal(false)}>
+          <div className="p-5">
+            <header className="mb-4">
+              <h1 className="font-bold text-lg text-center">
+                공유할 사람을 선택하세요!
+              </h1>
+            </header>
+            <div className="mb-4">
+              <Select
+                options={searchedUsers.map((user) => ({
+                  label: `${user.rk} ${user.nm}`,
+                  value: user.sn,
+                }))}
+                onChange={(data) => setSelectedUserSN(data?.value)}
+              />
+            </div>
+            <div className="flex justify-center">
+              <button
+                className="bg-primary text-white font-bold px-3 py-2 rounded-lg"
+                onClick={handleShare}
+              >
+                공유하기
+              </button>
+            </div>
+          </div>
         </Modal>
       </>
     )

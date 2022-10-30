@@ -19,7 +19,8 @@ export interface Record {
   created_at: string;
   approval_status: 'NOTHING' | 'PENDING' | 'REJECTED' | 'APPROVED';
   approved_at: string;
-  unit: string;
+  unit: number;
+  unit_name: string;
 }
 
 export interface History {
