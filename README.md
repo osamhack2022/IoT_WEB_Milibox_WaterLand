@@ -3,7 +3,7 @@
 
 <div align=center>
 
-![Logo](https://logosbynick.com/wp-content/uploads/2018/03/final-logo-example.png)
+![Logo](/Docs/Images/milibox.gif)
 </div>
   <center><h3>국방 블랙박스 : 군부대 출입차량용 암호화 영상기록 체계</h3></center>
 ><center><h3>보안과 편리성을 위한 암호화 블랙박스</h3></center>
@@ -35,78 +35,78 @@
 * 로그인 화면
 <div align=center>
 
-![Logo](/Docs/Images/login.png)
+![로그인 화면](/Docs/Images/login.png)
 </div>
 
 * 초기 화면(일반 사용자)
 <div align=center>
 
-![Logo](/Docs/Images/list1.png)
+![초기 화면](/Docs/Images/list1.png)
 </div>
 
 * 영상 업로드 과정
 <div align=center>
 
-![Logo](/Docs/Images/upload.png)
+![영상 업로드 과정](/Docs/Images/upload.png)
 
-![Logo](/Docs/Images/upload2.png)
+![영상 업로드 과정](/Docs/Images/upload2.png)
 </div>
 
 * 영상 업로드 완료 화면
 <div align=center>
 
-![Logo](/Docs/Images/list2.png)
+![영상 업로드 완료 화면](/Docs/Images/list2.png)
 </div>
 
 
 * 영상 조회 화면 - 복호화된 블랙박스 영상을 조회할 수 있습니다.
 <div align=center>
 
-![Logo](/Docs/Images/view1.png)
+![영상 조회 화면](/Docs/Images/view1.png)
 </div>
 
 * 해당 영상을 조회한 사용자 목록 및 정보를 확인할 수 있습니다. 또한 다른 사용자가 영상을 조회할 수 있도록 해주는 “공유하기” 기능도 사용할 수 있습니다.
 <div align=center>
 
-![Logo](/Docs/Images/view2.png)
+![영상 조회 화면](/Docs/Images/view2.png)
 </div>
 
 * 공유받은 영상 - 다른 사용자로부터 공유받은 영상을 조회할 수 있습니다.
 <div align=center>
 
-![Logo](/Docs/Images/sharelist.png)
+![공유받은 영상](/Docs/Images/sharelist.png)
 </div>
 
 
 * 영상은 “반출 신청”을 통해 자료교환체계를 이용하여 보험사 혹은 수사기관에 제출할 수 있습니다.
 <div align=center>
 
-![Logo](/Docs/Images/view3.png)
+![반출 신청](/Docs/Images/view3.png)
 </div>
 
 * 반출 신청 완료 화면
 <div align=center>
 
-![Logo](/Docs/Images/takeout.png)
+![반출 신청 완료 화면](/Docs/Images/takeout.png)
 </div>
 
 * 사용자 정보 화면
 <div align=center>
 
-![Logo](/Docs/Images/admincreate.png)
+![사용자 정보 화면](/Docs/Images/admincreate.png)
 </div>
 
 * 사용자 관리 화면(최고관리자 전용)
 <div align=center>
 
-![Logo](/Docs/Images/adminlist.png)
+![사용자 관리 화면](/Docs/Images/adminlist.png)
 </div>
 
 * 영상 반출 승인 관리(부대관리자 전용) - 사용자가 반출 신청한 영상에 보안 위반 소지가 있는지 검토하고, 해당 영상의 반출을 승인·거절할 수 있습니다.
 <div align=center>
 
-![Logo](/Docs/Images/approvelist.png)
-![Logo](/Docs/Images/approve1.png)
+![영상 반출 승인 관리](/Docs/Images/approvelist.png)
+![영상 반출 승인 관리](/Docs/Images/approve1.png)
 </div>
 
 
