@@ -110,6 +110,19 @@
 </div>
 
 
+## 기기 구성 / 필수 조건 안내 (Prerequisites)
+
+### 국방 블랙박스 본제품
+* Raspberry Pi
+* 3.5inch RPi LCD (A)
+* nRF24L01+
+* [국방 블랙박스 케이스 3D 모델링 Tinkercad](https://www.tinkercad.com/things/4JHKmULFASb)
+
+### 국방 블랙박스 위병소 송수신기
+* Raspberry Pi
+* nRF24L01+
+
+### 국방 블랙박스 영상조회관리 서비스(WEB)
 
 # 개발 계획 및 목표
 1주차: 아이디어 세부 기획
@@ -134,7 +147,7 @@
 6,7주차: 영상 및 문서 준비
 
 매주 2회정도의 회의
-[국방 블랙박스 케이스 3D 모델링 Tinkercad](https://www.tinkercad.com/things/4JHKmULFASb)
+
 # 기대 효과 및 전망
 부대 내에서 그동안 군사보안을 위해 교통안전과 사고처리에 블랙박스를 활용하지 못하였는데 본 솔루션으로 두마리 토끼를 잡을수있습니다. 또, 부대내에서 블랙박스 가림막을 제대로 설치하지않아 군사보안 유출의 우려를 줄일 수 있습니다. 마지막으로 사용자는 매번 가림막 설치,제거를 번거롭게 할 필요가 없어집니다.
 
@@ -208,16 +221,6 @@ $ pip install -r requirements.txt
 $ python milibox.py
 ```
 
-## 프로젝트 사용법 (Getting Started)
-**마크다운 문법을 이용하여 자유롭게 기재**
-
-잘 모를 경우
-구글 검색 - 마크다운 문법
-[https://post.naver.com/viewer/postView.nhn?volumeNo=24627214&memberNo=42458017](https://post.naver.com/viewer/postView.nhn?volumeNo=24627214&memberNo=42458017)
-
- 편한 마크다운 에디터를 찾아서 사용
- 샘플 에디터 [https://stackedit.io/app#](https://stackedit.io/app#)
- 
 ## 팀 정보 (Team Information)
 - 박정섭 (parkjeongseop@parkjeongseop.com), Github Id: [ParkJeongseop](https://github.com/ParkJeongseop)
 - 노우준 (woojunro0223@gmail.com), Github Id: [woojunro](https://github.com/woojunro)
@@ -225,7 +228,7 @@ $ python milibox.py
 - 멘토: 고수창 멘토님
 
 ## 저작권 및 사용권 정보 (Copyleft / End User License)
- * [MIT](https://github.com/osam2020-WEB/Sample-ProjectName-TeamName/blob/master/license.md)
+ * [MIT](/LICENSE)
 
 This project is licensed under the terms of the MIT license.
 
