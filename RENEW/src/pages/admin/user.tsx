@@ -12,6 +12,7 @@ export const AdminUserPage = observer(() => {
 
   const [orgs, setOrgs] = useState<Org[]>([])
   const [selectedOrg, setSelectedOrg] = useState<number>()
+  const [subOrgs, setSubOrgs] = useState<Org[]>([])
 
   const [type, setType] = useState<'User' | 'ADMIN' | 'MASTER'>()
 
@@ -154,8 +155,24 @@ export const AdminUserPage = observer(() => {
                   value: org.id,
                 }))}
                 placeholder="부대를 선택하세요."
-                onChange={(data) => setSelectedOrg(data?.value)}
+                onChange={(data) => {
+                  setSelectedOrg(data?.value)
+                  API.get(`/org?parent=${data?.value}`).then((res) =>
+                    setSubOrgs(res.data)
+                  )
+                }}
               />
+              {subOrgs.length > 0 && (
+                <Select
+                  options={subOrgs.map((org) => ({
+                    label: org.name,
+                    value: org.id,
+                  }))}
+                  placeholder="부대를 선택하세요."
+                  onChange={(data) => setSelectedOrg(data?.value)}
+                  className="mt-2"
+                />
+              )}
             </div>
           )}
           <div className="flex justify-end">

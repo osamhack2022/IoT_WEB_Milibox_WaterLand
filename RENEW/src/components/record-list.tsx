@@ -87,6 +87,7 @@ export const RecordList = observer(
         )
         toast.success('공유되었습니다!')
         setShowVideoModal(false)
+        setShowShareModal(false)
       } catch (e) {
         console.error(e)
         toast.error('오류가 발생하였습니다.')
@@ -217,43 +218,47 @@ export const RecordList = observer(
               })}
             </div>
           </section>
-          {role === 'admin' ? (
-            <div className="p-3 flex justify-end">
-              <button
-                className="flex-none bg-green-500 text-white font-bold px-3 py-2 rounded-lg mr-3"
-                onClick={handleApprove}
-              >
-                반출 승인
-              </button>
-              <button
-                className="flex-none bg-red-500 text-white font-bold px-3 py-2 rounded-lg"
-                onClick={handleReject}
-              >
-                반출 거절
-              </button>
-            </div>
-          ) : (
-            <div className="p-3 flex">
-              <input
-                className="w-full border rounded-lg mr-3 px-3 py-2"
-                type="text"
-                value={comment}
-                onChange={(e) => setComment(e.currentTarget.value)}
-                placeholder="반출 사유를 입력하세요."
-              />
-              <button
-                className="flex-none bg-primary text-white font-bold px-3 py-2 rounded-lg mr-3"
-                onClick={handleTakeout}
-              >
-                반출 신청
-              </button>
-              <button
-                className="flex-none bg-primary text-white font-bold px-3 py-2 rounded-lg"
-                onClick={openShareModal}
-              >
-                공유하기
-              </button>
-            </div>
+          {role !== 'shared' && (
+            <>
+              {role === 'admin' ? (
+                <div className="p-3 flex justify-end">
+                  <button
+                    className="flex-none bg-green-500 text-white font-bold px-3 py-2 rounded-lg mr-3"
+                    onClick={handleApprove}
+                  >
+                    반출 승인
+                  </button>
+                  <button
+                    className="flex-none bg-red-500 text-white font-bold px-3 py-2 rounded-lg"
+                    onClick={handleReject}
+                  >
+                    반출 거절
+                  </button>
+                </div>
+              ) : (
+                <div className="p-3 flex">
+                  <input
+                    className="w-full border rounded-lg mr-3 px-3 py-2"
+                    type="text"
+                    value={comment}
+                    onChange={(e) => setComment(e.currentTarget.value)}
+                    placeholder="반출 사유를 입력하세요."
+                  />
+                  <button
+                    className="flex-none bg-primary text-white font-bold px-3 py-2 rounded-lg mr-3"
+                    onClick={handleTakeout}
+                  >
+                    반출 신청
+                  </button>
+                  <button
+                    className="flex-none bg-primary text-white font-bold px-3 py-2 rounded-lg"
+                    onClick={openShareModal}
+                  >
+                    공유하기
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </Modal>
         <Modal open={showShareModal} onClose={() => setShowShareModal(false)}>
