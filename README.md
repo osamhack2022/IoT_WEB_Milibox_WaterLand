@@ -114,6 +114,7 @@
 
 ### 국방 블랙박스 본제품
 * Raspberry Pi
+* PiCamera
 * 3.5inch RPi LCD (A)
 * nRF24L01+
 * [국방 블랙박스 케이스 3D 모델링 Tinkercad](https://www.tinkercad.com/things/4JHKmULFASb)
@@ -123,65 +124,31 @@
 * nRF24L01+
 
 ### 국방 블랙박스 영상조회관리 서비스(WEB)
+* ECMAScript 6 지원 브라우저 사용
+* 권장: Google Chrome 버젼 77 이상
 
-# 개발 계획 및 목표
-1주차: 아이디어 세부 기획
-
-2-4주차: 개발 진행
-[IoT]
-- 하드웨어 설계
-- 임베디드 소프트웨어개발
-- RF통신하여 부대 출입 인식하여 일반모드/부대모드 전환
-- 일반모드: 영상촬영 저장 / 부대모드: 영상촬영하여 암호화하여 저장
-- 부대모드->일반모드전환시 암호화영상 파일 삭제(자료 필요시 사고발생직후 파일 추출 필요)
-[Web]
-- "부대내 차량용 영상기록판독요청체계" 개발
-- 사용자가 로그인(국방망 전군사용자체계 MOUS) 로그인(가상)
-- 판독요청서류 작성 및 암호화 영상 파일 제출 기능
-- 관리자(관련 부서)페이지에서는 암호화된 영상파일을 체계상에서 복호화하여 제공
-
-5주차:
-[IoT]
-[Web]
-
-6,7주차: 영상 및 문서 준비
-
-매주 2회정도의 회의
 
 # 기대 효과 및 전망
 부대 내에서 그동안 군사보안을 위해 교통안전과 사고처리에 블랙박스를 활용하지 못하였는데 본 솔루션으로 두마리 토끼를 잡을수있습니다. 또, 부대내에서 블랙박스 가림막을 제대로 설치하지않아 군사보안 유출의 우려를 줄일 수 있습니다. 마지막으로 사용자는 매번 가림막 설치,제거를 번거롭게 할 필요가 없어집니다.
 
-# 팀장 역할
-현재 개발병으로 복무하며 국방망 웹 응용체계를 개발하고있고, 이전 직장에서 IoT장비를 개발해본 경험이 있어 본 프로젝트에 전반적으로 기여할 수 있습니다. 지원자 분들의 역량에 맞게 제가 개발에 참여할 파트를 조율할 수 있습니다. 또한, 본 솔루션과 관련하여 특허출원도 진행시도중에있습니다.
-
-
-
-# Project name or Logo
-
-
-프로젝트명 또는 프로젝트 로고 이미지 **(택1)**
-
-## 프로잭트 소개
-- 설명 기입
-
-
-## 기능 설명
- - 설명 기입
-
-## 컴퓨터 구성 / 필수 조건 안내 (Prerequisites)
-* ECMAScript 6 지원 브라우저 사용
-* 권장: Google Chrome 버젼 77 이상
 
 ## 기술 스택 (Technique Used) 
+
+### Raspberry Pi(국방블랙박스 본체)
+ - py-nrf24 (RF통신 라이브러리)
+ - Python3 cryptography (암호화복호화 라이브러리)
+
 ### Server(back-end)
- -  nodejs, php, java 등 서버 언어 버전 
- - express, laravel, sptring boot 등 사용한 프레임워크 
- - DB 등 사용한 다른 프로그램 
+ - Python3 cryptography (암호화복호화 라이브러리)
+ - Python3
+ - Django
+ - Django REST framework
+ - drf-yasg
+ - Swagger
  
 ### Front-end
- -  react.js, vue.js 등 사용한 front-end 프레임워크 
- -  UI framework
- - 기타 사용한 라이브러리
+ - react.js
+ - tailwindcss
 
 ## 설치 안내 (Installation Process)
 ### Web(Back-end)
@@ -198,7 +165,8 @@ $ python manage.py runserver <ip>:<port>
 ```bash
 $ git clone https://github.com/osamhack2022-v2/IoT_WEB_Milibox_WaterLand
 $ cd WEB(FE)/
-$ 
+$ yarn
+$ yarn dev
 ```
 
 ### IoT(Raspberry Pi) (블랙박스)
