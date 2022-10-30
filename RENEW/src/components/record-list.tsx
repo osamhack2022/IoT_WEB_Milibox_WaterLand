@@ -46,19 +46,12 @@ export const RecordList = observer(
       try {
         const answer = confirm('해당 영상을 반출 신청하시겠습니까?')
         if (answer) {
-          const res = await API.post(
-            '/records/takeout',
-            {
-              record_id: selectedRecordId,
-              comment,
-            },
-            {
+          const res = await API.get(
+            `/records/takeout?record_id=${selectedRecordId}&comment=${comment}`, {
               headers: {
                 sn: userStore.user?.sn,
               },
-              method: 'POST',
-            }
-          )
+            })
           toast.success('반출 신청되었습니다!')
           setShowVideoModal(false)
         }
@@ -73,18 +66,11 @@ export const RecordList = observer(
     const handleShare = async () => {
       try {
         const sn = prompt('공유할 사람의 군번을 입력하세요.')
-        const res = await API.post(
-          '/records/share',
-          {
-            record_id: selectedRecordId,
-            sn,
+        const res = await API.get(`/records/share?record_id=${selectedRecordId}&sn=${sn}`, {
+          headers: {
+            sn: userStore.user?.sn,
           },
-          {
-            headers: {
-              sn: userStore.user?.sn,
-            },
-          }
-        )
+        })
         toast.success('공유되었습니다!')
         setShowVideoModal(false)
       } catch (e) {
@@ -99,18 +85,11 @@ export const RecordList = observer(
       try {
         const answer = confirm('승인하시겠습니까?')
         if (answer) {
-          const res = await API.post(
-            '/admin/takeout',
-            {
-              record_id: selectedRecordId,
-              action: 'APPROVE',
+          const res = await API.get(`/admin/takeout?record_id=${selectedRecordId}&action=APPROVE`, {
+            headers: {
+              sn: userStore.user?.sn,
             },
-            {
-              headers: {
-                sn: userStore.user?.sn,
-              },
-            }
-          )
+          })
           toast.success('승인되었습니다!')
           setShowVideoModal(false)
         }
@@ -126,18 +105,11 @@ export const RecordList = observer(
       try {
         const answer = confirm('거절하시겠습니까?')
         if (answer) {
-          const res = await API.post(
-            '/admin/takeout',
-            {
-              record_id: selectedRecordId,
-              action: 'REJECT',
+          const res = await API.get(`/admin/takeout?record_id=${selectedRecordId}&action=REJECT`, {
+            headers: {
+              sn: userStore.user?.sn,
             },
-            {
-              headers: {
-                sn: userStore.user?.sn,
-              },
-            }
-          )
+          })
           toast.success('거절되었습니다!')
           setShowVideoModal(false)
         }
