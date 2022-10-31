@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Jua&Noto+Sans+KR:wght@300;400;700;900&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  font-family: "Noto Sans KR", sans-serif;
+  animation-fill-mode: forwards !important;
+}
+
+.font-jua {
+  font-family: "Jua", sans-serif;
+}
