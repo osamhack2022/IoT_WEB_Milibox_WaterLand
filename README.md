@@ -30,7 +30,9 @@
 
   
 ## 소개 영상 (Video Clips)
+[![시연영상](http://img.youtube.com/vi/IbvoWkKLvi0/0.jpg)](https://youtu.be/IbvoWkKLvi0)
 
+[시연영상](https://youtu.be/IbvoWkKLvi0)
 ## 기능 설명 (Functions)
 * 로그인 화면
 <div align=center>
